@@ -1,14 +1,20 @@
 'use strict';
 
+const FILL_STYLE = 'white';
+const STROKE_STYLE = '#3d3d3d';
+const BLOCK_STYLE = '#3d3d3d';
+const ACTIVE_STYLE = '#31ce31';
+
 export default class Cell {
 
-    constructor(row, col, board, block = false) {
+    constructor(row, col, board) {
         this.row = row;
         this.col = col;
         this.board = board;
-        this.block = block;
         this.alien = null;
         this.gun = null;
+        this.block = false;
+        this.active = false;
     }
 
     setAlien(alien) {
@@ -28,14 +34,17 @@ export default class Cell {
     paint(context) {
         const cellWidth = context.canvas.width / this.board.cols;
         const cellHeight = context.canvas.height / this.board.rows;
+        context.strokeStyle = STROKE_STYLE;
         if (this.block) {
-            context.fillStyle = 'black';
-            context.fillRect(cellWidth * this.col, cellHeight * this.row, cellWidth, cellHeight);
+            context.fillStyle = BLOCK_STYLE;
+        } else if (this.active) {
+            context.fillStyle = ACTIVE_STYLE;
         } else {
-            context.strokeStyle = 'black';
-            context.strokeRect(cellWidth * this.col, cellHeight * this.row, cellWidth, cellHeight);
+            context.fillStyle = FILL_STYLE;
         }
-        if (this.alien)  {
+        context.fillRect(cellWidth * this.col, cellHeight * this.row, cellWidth, cellHeight);
+        context.strokeRect(cellWidth * this.col, cellHeight * this.row, cellWidth, cellHeight);
+         if (this.alien)  {
             this.alien.paint(context);
         }
     }

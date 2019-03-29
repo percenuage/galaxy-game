@@ -4,8 +4,6 @@ import Board from './Board.js';
 import Alien from './Alien.js';
 import Gun from './Gun.js';
 
-const MAX_ALIEN_STEPS = 3;
-
 /* MODELS */
 let board = new Board(10, 10);
 board.addRandomBlockingCells(10);
@@ -15,11 +13,11 @@ board.addGun(new Gun('laser2', 20));
 board.addGun(new Gun('laser3', 30));
 board.addGun(new Gun('laser4', 40));
 
-let context = document.querySelector('canvas').getContext('2d');
-board.paint(context);
-
 let currentAlien = board.nextAlien();
 let count = 0;
+
+let context = document.querySelector('canvas').getContext('2d');
+board.paint(context);
 
 /* CONTROLLERS */
 document.onkeyup = e => {
@@ -39,7 +37,7 @@ document.onkeyup = e => {
         default:
             break;
     }
-    if (++count >= MAX_ALIEN_STEPS) {
+    if (++count >= Board.MAX_ALIEN_STEPS) {
         currentAlien = board.nextAlien();
         count = 0;
     }

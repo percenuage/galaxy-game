@@ -2,6 +2,8 @@
 
 import Cell from './Cell.js';
 
+const MAX_ALIEN_STEPS = 3;
+
 export default class Board {
     constructor(rows, cols) {
         this.rows = rows;
@@ -60,6 +62,8 @@ export default class Board {
     nextAlien() {
         let alien = this.aliens.shift();
         this.aliens.push(alien);
+        this.resetAlienPaths();
+        this.enableAlienPaths(alien.cell, MAX_ALIEN_STEPS);
         return alien;
     }
 
@@ -70,9 +74,24 @@ export default class Board {
         }
     }
 
+    enableAlienPaths(origin, steps) {
+        if (steps < 0) return;
+        origin.active = !origin.block;
+        !origin.block && this.enableAlienPaths(this.getRelativeCell(origin, -1, 0), steps - 1);
+        !origin.block && this.enableAlienPaths(this.getRelativeCell(origin, 0, 1), steps - 1);
+        !origin.block && this.enableAlienPaths(this.getRelativeCell(origin, 1, 0), steps - 1);
+        !origin.block && this.enableAlienPaths(this.getRelativeCell(origin, 0, -1), steps - 1);
+    }
+
+    resetAlienPaths() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.cells[i][j].active = false;
+            }
+        }
+    }
+
     paint(context) {
-        context.fillStyle = "white";
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 this.cells[i][j].paint(context);
@@ -84,5 +103,9 @@ export default class Board {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    static get MAX_ALIEN_STEPS() {
+        return MAX_ALIEN_STEPS;
     }
 }
