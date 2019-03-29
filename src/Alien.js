@@ -9,6 +9,16 @@ export default class Alien {
         this.cell = cell;
     }
 
+    canMove(cell) {
+        return !cell.block && !cell.alien;
+    }
+
+    moveTo(cell) {
+        this.cell.alien = null;
+        this.cell = cell;
+        this.cell.alien = this;
+    }
+
     paint(context) {
         const cellWidth = context.canvas.width / this.cell.board.cols;
         const cellHeight = context.canvas.height / this.cell.board.rows;

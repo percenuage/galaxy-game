@@ -1,12 +1,13 @@
 'use strict';
 
-import Cell from './cell.js';
+import Cell from './Cell.js';
 
 export default class Board {
     constructor(rows, cols) {
         this.rows = rows;
         this.cols = cols;
         this.cells = [];
+        this.aliens = [];
         this.initCells();
     }
 
@@ -29,6 +30,7 @@ export default class Board {
     addAlien(alien) {
         let cell = this.getRandomVoidCell();
         cell.setAlien(alien);
+        this.aliens.push(alien);
     }
 
     addGun(gun) {
@@ -43,6 +45,29 @@ export default class Board {
             col = Board.getRandomIntExclusive(0, this.cols);
         } while (!this.cells[row][col].isVoid());
         return this.cells[row][col];
+    }
+
+    getRelativeCell(origin, row, col) {
+        let cell = null;
+        try {
+            cell = this.cells[origin.row + row][origin.col + col] || origin;
+        } catch (e) {
+            return origin;
+        }
+        return cell;
+    }
+
+    nextAlien() {
+        let alien = this.aliens.shift();
+        this.aliens.push(alien);
+        return alien;
+    }
+
+    moveAlien(alien, row, col) {
+        let cell = this.getRelativeCell(alien.cell, row, col);
+        if (alien.canMove(cell)) {
+            alien.moveTo(cell);
+        }
     }
 
     paint(context) {
